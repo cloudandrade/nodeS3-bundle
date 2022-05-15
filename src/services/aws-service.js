@@ -13,11 +13,23 @@ const sendFile = async (FILENAME, FILE, BUCKET, KEY) => {
     Body: FILE,
   };
 
-  return s3.upload(params, function (s3Err, data) {
+  s3.upload(params, function (s3Err, data) {
     if (s3Err) throw s3Err;
+
     console.log(`File uploaded successfully at ${data.Location}`);
-    return data.location;
   });
 };
 
-module.exports = { sendFile };
+const deleteFile = async (FILENAME, BUCKET, KEY) => {
+  const params = {
+    Bucket: BUCKET,
+    Key: `${KEY}/${FILENAME}`,
+  };
+
+  s3.deleteObject(params, function (s3Err) {
+    if (s3Err) throw s3Err;
+    console.log(`File deleted successfully`);
+  });
+};
+
+module.exports = { sendFile, deleteFile };

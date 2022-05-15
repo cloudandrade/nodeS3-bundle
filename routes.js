@@ -2,7 +2,10 @@ const routes = require('express').Router();
 const streamifier = require('streamifier');
 
 const multer = require('multer');
-const { sendFile } = require('./src/services/aws-service');
+const {
+  sendFile,
+  deleteFile,
+} = require('./src/services/aws-service');
 
 routes.get('/files', async (req, res) => {
   //const posts = await Post.find();
@@ -43,5 +46,23 @@ routes.post(
     }
   }
 );
+
+routes.delete('/user/img/:filename', async (req, res) => {
+  const { filename } = req.params;
+  try {
+    deleteFile(
+      filename,
+      process.env.BUCKET_NAME,
+      process.env.AWS_USER_IMG_FOLDER
+    );
+
+    res.status(200).send('arquivo excluído com sucesso');
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send('Erro ao excluir arquivo do bucket: ' + erro);
+  }
+});
 
 module.exports = routes;
